@@ -1,0 +1,38 @@
+server {
+
+    server_name noc.renderx.net;
+
+    client_max_body_size 25m;
+
+    location /static/ {
+        alias /opt/netbox/netbox/static/;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8001;
+        proxy_set_header X-Forwarded-Host $server_name;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        add_header P3P 'CP="ALL DSP COR PSAa PSDa OUR NOR ONL UNI COM NAV"';
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/noc.renderx.net/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/noc.renderx.net/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+server {
+    if ($host = noc.renderx.net) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+
+    server_name noc.renderx.net;
+    return 404; # managed by Certbot
+
+
+}

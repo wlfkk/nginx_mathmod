@@ -1,0 +1,21 @@
+server {
+    listen 8088;
+    server_name filimonov.org;
+
+    location / {
+        add_header Access-Control-Allow-Origin *;
+        root /var/www/html/stream;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/filimonov.org/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/filimonov.org/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+types {
+    application/dash+xml mpd;
+    application/vnd.apple.mpegurl m3u8;
+}
